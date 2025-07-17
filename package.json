@@ -1,0 +1,40 @@
+{
+  "name": "slate-android-tests",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "yarn build && yarn test:appium",
+    "build": "yarn build:vite && yarn build:android",
+    "build:vite": "tsc -b && vite build",
+    "build:android": "./gradlew build && ./gradlew installDebug",
+    "test:appium": "vitest run",
+    "appium:install": "sh appium_install.sh",
+    "vite:dev": "vite",
+    "prepare": "yarn appium:install"
+  },
+  "dependencies": {
+    "htmlfy": "^0.8.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "slate": "^0.117.2",
+    "slate-dom": "^0.117.4",
+    "slate-history": "^0.113.1",
+    "slate-react": "^0.117.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.14",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "appium": "^2.19.0",
+    "appium-chromium-driver": "^1.5.1",
+    "appium-uiautomator2-driver": "^4.2.5",
+    "globals": "^16.3.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.35.1",
+    "vite": "^7.0.4",
+    "vitest": "^3.2.4",
+    "webdriverio": "^9.17.0"
+  }
+}
