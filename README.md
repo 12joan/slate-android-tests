@@ -2,6 +2,8 @@
 
 Integration tests for the Slate editor framework on Android.
 
+https://github.com/user-attachments/assets/8afaa406-ee30-4b91-9c16-77d6c0125f4a
+
 ## Usage
 
 I haven't tested these steps from scratch. Submit a PR if there are steps I've missed.
