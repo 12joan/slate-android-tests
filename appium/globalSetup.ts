@@ -1,13 +1,14 @@
+/**
+ * This file runs before all test files. It runs in a separate Node process, so
+ * we can only share serializable data.
+ */
+
 import { spawn, type ChildProcessWithoutNullStreams } from 'child_process'
 import { appendFileSync, openSync } from 'fs'
 import path from 'path'
 import * as WebdriverIO from 'webdriverio'
 import { TestProject } from 'vitest/node'
-
-const apkPath = path.join(
-  import.meta.dirname,
-  '../app/build/outputs/apk/debug/app-debug.apk',
-)
+import { driverOptions } from './driverOptions'
 
 const appiumLogPath = path.join(import.meta.dirname, '../appium.log')
 
@@ -19,20 +20,6 @@ const wait = (delay: number) =>
 
 const appiumLogFile = openSync(appiumLogPath, 'w')
 const logAppium = (data: any) => appendFileSync(appiumLogFile, data.toString())
-
-export const driverOptions = {
-  hostname: 'localhost',
-  port: 4723,
-  logLevel: 'error',
-  capabilities: {
-    platformName: 'Android',
-    'appium:app': apkPath,
-    'appium:automationName': 'UiAutomator2',
-    'appium:deviceName': 'Android',
-    'appium:appPackage': 'org.slatejs.androidtests',
-    'appium:appActivity': '.MainActivity',
-  },
-} as const
 
 export async function setup(project: TestProject) {
   appiumProcess = spawn('appium', [
