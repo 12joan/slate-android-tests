@@ -5,5 +5,6 @@ export default defineConfig({
     dir: 'appium',
     testTimeout: 60_000,
     hookTimeout: 60_000,
+    globalSetup: 'appium/globalSetup.ts',
   },
 })

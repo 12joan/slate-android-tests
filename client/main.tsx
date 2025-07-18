@@ -1,9 +1,16 @@
-import {prettify} from 'htmlfy'
+import { prettify } from 'htmlfy'
 import { StrictMode, useEffect, useState, type CSSProperties } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createEditor, type BaseEditor } from 'slate'
 import { HistoryEditor, withHistory } from 'slate-history'
-import { Editable, ReactEditor, Slate, useSlate, useSlateStatic, withReact } from 'slate-react'
+import {
+  Editable,
+  ReactEditor,
+  Slate,
+  useSlate,
+  useSlateStatic,
+  withReact,
+} from 'slate-react'
 
 declare module 'slate' {
   interface CustomTypes {
@@ -17,19 +24,30 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 )
 
-const initialValue = [
-  { children: [{ text: '' }] },
-]
+const initialValue = [{ children: [{ text: '' }] }]
 
 function App() {
   const [editor] = useState(() => withReact(withHistory(createEditor())))
 
   return (
     <Slate editor={editor} initialValue={initialValue}>
+      <Controls />
       <Editable id="editable" placeholder="Tap here to edit..." />
       <InspectSlate />
       <InspectHtml />
     </Slate>
+  )
+}
+
+function Controls() {
+  const refresh = () => window.location.reload()
+
+  return (
+    <div style={{ marginBottom: '0.5rem' }}>
+      <button type="button" onClick={refresh}>
+        Refresh
+      </button>
+    </div>
   )
 }
 
