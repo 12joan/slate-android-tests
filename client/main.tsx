@@ -8,6 +8,7 @@ import {
   ReactEditor,
   Slate,
   useSlate,
+  useSlateSelection,
   useSlateStatic,
   withReact,
 } from 'slate-react'
@@ -34,20 +35,60 @@ function App() {
       <Controls />
       <Editable id="editable" placeholder="Tap here to edit..." />
       <InspectSlate />
+      <InspectSelection />
       <InspectHtml />
     </Slate>
   )
 }
 
 function Controls() {
+  const editor = useSlateStatic()
+  const [replaceValue, setReplaceValue] = useState('')
+  const [replaceSelection, setReplaceSelection] = useState('')
+
   const refresh = () => window.location.reload()
 
+  useEffect(() => {
+    if (replaceValue && replaceSelection) {
+      try {
+        editor.children = JSON.parse(replaceValue)
+        editor.selection = JSON.parse(replaceSelection)
+        editor.operations = []
+        editor.history.undos = []
+        editor.history.redos = []
+        editor.onChange()
+        setTimeout(() => ReactEditor.focus(editor))
+      } catch {}
+    }
+  }, [replaceValue, replaceSelection])
+
   return (
-    <div style={{ marginBottom: '0.5rem' }}>
-      <button type="button" onClick={refresh}>
-        Refresh
-      </button>
-    </div>
+    <>
+      <div style={{ marginBottom: '0.5rem' }}>
+        <button type="button" onClick={refresh}>
+          Refresh
+        </button>
+      </div>
+
+      <div style={{ marginBottom: '0.5rem' }}>
+        <input
+          type="text"
+          value={replaceValue}
+          id="replace-value"
+          aria-label="Replace value"
+          placeholder="Replace value"
+          onChange={(event) => setReplaceValue(event.target.value)}
+        />{' '}
+        <input
+          type="text"
+          value={replaceSelection}
+          id="replace-selection"
+          aria-label="Replace selection"
+          placeholder="Replace selection"
+          onChange={(event) => setReplaceSelection(event.target.value)}
+        />
+      </div>
+    </>
   )
 }
 
@@ -66,6 +107,16 @@ function InspectSlate() {
   return (
     <pre id="inspect-slate" style={preStyles}>
       {JSON.stringify(editor.children, null, 2)}
+    </pre>
+  )
+}
+
+function InspectSelection() {
+  const selection = useSlateSelection()
+
+  return (
+    <pre id="inspect-selection" style={preStyles}>
+      {JSON.stringify(selection, null, 2)}
     </pre>
   )
 }

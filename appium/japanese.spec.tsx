@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { jsx } from 'slate-hyperscript'
 import { beforeAll, it } from 'vitest'
 import { driver } from './driver'
 
@@ -10,9 +12,12 @@ it('types a simple sentence', async () => {
   await driver.type('a') // Workaround for Slate IME bug
   await driver.type('korehanihonngo ')
 
-  await driver.expectValue([
-    {
-      children: [{ text: 'あこれは日本語' }],
-    },
-  ])
+  await driver.expectValue(
+    <editor>
+      <element>
+        あこれは日本語
+        <cursor />
+      </element>
+    </editor>,
+  )
 })

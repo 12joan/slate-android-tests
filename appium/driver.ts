@@ -1,7 +1,7 @@
 import { expect, inject } from 'vitest'
 import * as WebdriverIO from 'webdriverio'
 import { appActivity, appPackage, driverOptions } from './driverOptions'
-import { Node, type Descendant } from 'slate'
+import { Editor, Node } from 'slate'
 import { stringToKeycodes } from './stringToKeycodes'
 import { AndroidKeys } from './keycodes'
 import { GboardLanguageSwitcher, type Language } from './LanguageSwitcher'
@@ -52,6 +52,19 @@ export class Driver {
     await this.editable.click()
   }
 
+  async setValue({
+    children,
+    selection,
+  }: Pick<Editor, 'children' | 'selection'>) {
+    await this.driver
+      .$('//*[@resource-id="replace-value"]')
+      .setValue(JSON.stringify(children))
+
+    await this.driver
+      .$('//*[@resource-id="replace-selection"]')
+      .setValue(JSON.stringify(selection))
+  }
+
   async type(
     text: string,
     { delayBetween = 50, delayAfter = 500 }: MultipleDelayOptions = {},
@@ -100,21 +113,33 @@ export class Driver {
     return JSON.parse(await inspectSlate.getText())
   }
 
+  async getSelection() {
+    const inspectSelection = this.driver.$(
+      '//*[@resource-id="inspect-selection"]',
+    )
+    return JSON.parse(await inspectSelection.getText())
+  }
+
   async getHtml() {
     const inspectHtml = this.driver.$('//*[@resource-id="inspect-html"]')
     return inspectHtml.getText()
   }
 
-  async expectValue(expectedValue: Descendant[]) {
-    const expectedText = expectedValue.map(Node.string).join('\n')
+  async expectValue({
+    children,
+    selection,
+  }: Pick<Editor, 'children' | 'selection'>) {
+    const text = children.map(Node.string).join('\n')
 
-    const [actualText, actualValue] = await Promise.all([
+    const [actualText, actualValue, actualSelection] = await Promise.all([
       this.getPlainText(),
       this.getValue(),
+      this.getSelection(),
     ])
 
-    expect(actualValue).toEqual(expectedValue)
-    expect(actualText).toEqual(expectedText)
+    expect(actualValue).toEqual(children)
+    expect(actualSelection).toEqual(selection)
+    expect(actualText).toEqual(text)
   }
 
   get editable() {
