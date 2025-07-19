@@ -8,6 +8,6 @@ export default defineConfig({
     globalSetup: 'appium/globalSetup.ts',
     setupFiles: 'appium/setup.ts',
     maxWorkers: 1,
-    retry: 4,
+    // retry: 4,
   },
 })

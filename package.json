@@ -23,6 +23,7 @@
     "slate-react": "^0.117.4"
   },
   "devDependencies": {
+    "@types/jsdom": "^21.1.7",
     "@types/node": "^24.0.14",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
@@ -31,6 +32,7 @@
     "appium-chromium-driver": "^1.5.1",
     "appium-uiautomator2-driver": "^4.2.5",
     "globals": "^16.3.0",
+    "jsdom": "^26.1.0",
     "prettier": "^3.6.2",
     "slate-hyperscript": "^0.100.0",
     "typescript": "~5.8.3",

@@ -33,10 +33,15 @@ function App() {
   return (
     <Slate editor={editor} initialValue={initialValue}>
       <Controls />
+
       <Editable id="editable" placeholder="Tap here to edit..." />
-      <InspectSlate />
-      <InspectSelection />
-      <InspectHtml />
+
+      {/* Appium cannot read off-screen elements, so keep them all on-screen */}
+      <div style={{ display: 'flex', gap: '0.25rem' }}>
+        <InspectSlate />
+        <InspectSelection />
+        <InspectHtml />
+      </div>
     </Slate>
   )
 }
@@ -99,6 +104,8 @@ const preStyles: CSSProperties = {
   borderRadius: '0.25rem',
   marginTop: '0.5rem',
   overflowX: 'auto',
+  flexGrow: 1,
+  flexBasis: 0,
 }
 
 function InspectSlate() {
