@@ -4,11 +4,7 @@ import { appActivity, appPackage, driverOptions } from './driverOptions'
 import { Node, type Descendant } from 'slate'
 import { stringToKeycodes } from './stringToKeycodes'
 import { AndroidKeys } from './keycodes'
-import {
-  GboardLanguageSwitcher,
-  LangaugeSwitcher,
-  type Language,
-} from './LanguageSwitcher'
+import { GboardLanguageSwitcher, type Language } from './LanguageSwitcher'
 
 export interface DelayOptions {
   delayAfter?: number
