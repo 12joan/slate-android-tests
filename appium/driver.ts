@@ -1,19 +1,24 @@
 import { expect, inject } from 'vitest'
 import * as WebdriverIO from 'webdriverio'
-import { driverOptions } from './driverOptions'
+import { appActivity, appPackage, driverOptions } from './driverOptions'
 import { Node, type Descendant } from 'slate'
 import { stringToKeycodes } from './stringToKeycodes'
 import { AndroidKeys } from './keycodes'
+import {
+  GboardLanguageSwitcher,
+  LangaugeSwitcher,
+  type Language,
+} from './LanguageSwitcher'
 
-export interface TypeOptions {
-  delay?: number
+export interface DelayOptions {
+  delayAfter?: number
 }
 
-export interface BackspaceOptions {
-  delay?: number
+export interface MultipleDelayOptions extends DelayOptions {
+  delayBetween?: number
 }
 
-class Driver {
+export class Driver {
   private _driver: WebdriverIO.Browser | null = null
 
   async connect() {
@@ -25,34 +30,68 @@ class Driver {
     })
   }
 
-  async refresh() {
+  async startSlateActivity({ delayAfter = 500 }: DelayOptions = {}) {
+    await this.driver.startActivity(appPackage, appActivity)
+    await this.pause(delayAfter)
+  }
+
+  async switchLanguage(language: Language) {
+    await this.refresh()
+    // TODO: Add support for other keyboards and ensure the correct one is used
+    await new GboardLanguageSwitcher(this).ensureLanguage(language)
+  }
+
+  async refresh({ delayAfter = 500 }: DelayOptions = {}) {
     await this.driver.$('//android.widget.Button[@text="Refresh"]').click()
-    await this.driver.pause(500)
+    await this.pause(delayAfter)
   }
 
   async focus() {
     await this.editable.click()
   }
 
-  async type(text: string, { delay = 0 }: TypeOptions = {}) {
+  async type(
+    text: string,
+    { delayBetween = 0, delayAfter = 100 }: MultipleDelayOptions = {},
+  ) {
     const keycodes = stringToKeycodes(text)
 
-    for (const keycode of keycodes) {
-      await this.driver.pressKeyCode(keycode.keycode, keycode.shift ? 1 : 0)
-
-      if (delay > 0) {
-        await this.driver.pause(delay)
+    for (let i = 0; i < keycodes.length; i++) {
+      if (i > 0) {
+        await this.pause(delayBetween)
       }
+
+      const keycode = keycodes[i]
+      await this.driver.pressKeyCode(keycode.keycode, keycode.shift ? 1 : 0)
     }
+
+    await this.pause(delayAfter)
   }
 
-  async backspace(count = 1, { delay = 0 }: BackspaceOptions = {}) {
+  async backspace(
+    count = 1,
+    { delayBetween = 0, delayAfter = 100 }: MultipleDelayOptions = {},
+  ) {
     for (let i = 0; i < count; i++) {
-      await this.driver.pressKeyCode(AndroidKeys.KEYCODE_DEL)
-
-      if (delay > 0) {
-        await this.driver.pause(delay)
+      if (i > 0) {
+        await this.pause(delayBetween)
       }
+
+      await this.driver.pressKeyCode(AndroidKeys.KEYCODE_DEL)
+    }
+
+    await this.pause(delayAfter)
+  }
+
+  async cycleLanguage({ delayAfter = 100 }: DelayOptions = {}) {
+    // On some devices, this may need to be KEYCODE_LANGUAGE_SWITCH instead
+    await driver.driver.pressKeyCode(AndroidKeys.KEYCODE_SPACE, 1)
+    await this.pause(delayAfter)
+  }
+
+  async pause(delay: number) {
+    if (delay > 0) {
+      await this.driver.pause(delay)
     }
   }
 

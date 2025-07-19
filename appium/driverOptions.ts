@@ -5,6 +5,9 @@ const apkPath = path.join(
   '../app/build/outputs/apk/debug/app-debug.apk',
 )
 
+export const appPackage = 'org.slatejs.androidtests'
+export const appActivity = '.MainActivity'
+
 export const driverOptions = {
   hostname: 'localhost',
   port: 4723,
@@ -14,7 +17,7 @@ export const driverOptions = {
     'appium:app': apkPath,
     'appium:automationName': 'UiAutomator2',
     'appium:deviceName': 'Android',
-    'appium:appPackage': 'org.slatejs.androidtests',
-    'appium:appActivity': '.MainActivity',
+    'appium:appPackage': appPackage,
+    'appium:appActivity': appActivity,
   },
 } as const
