@@ -26,7 +26,7 @@ export class Driver {
     })
   }
 
-  async startSlateActivity({ delayAfter = 500 }: DelayOptions = {}) {
+  async startSlateActivity({ delayAfter = 1000 }: DelayOptions = {}) {
     await this.driver.startActivity(appPackage, appActivity)
     await this.pause(delayAfter)
   }
@@ -37,7 +37,13 @@ export class Driver {
     await new GboardLanguageSwitcher(this).ensureLanguage(language)
   }
 
-  async refresh({ delayAfter = 500 }: DelayOptions = {}) {
+  async cycleLanguage({ delayAfter = 500 }: DelayOptions = {}) {
+    // On some devices, this may need to be KEYCODE_LANGUAGE_SWITCH instead
+    await driver.driver.pressKeyCode(AndroidKeys.KEYCODE_SPACE, 1)
+    await this.pause(delayAfter)
+  }
+
+  async refresh({ delayAfter = 1000 }: DelayOptions = {}) {
     await this.driver.$('//android.widget.Button[@text="Refresh"]').click()
     await this.pause(delayAfter)
   }
@@ -48,7 +54,7 @@ export class Driver {
 
   async type(
     text: string,
-    { delayBetween = 0, delayAfter = 100 }: MultipleDelayOptions = {},
+    { delayBetween = 50, delayAfter = 500 }: MultipleDelayOptions = {},
   ) {
     const keycodes = stringToKeycodes(text)
 
@@ -66,7 +72,7 @@ export class Driver {
 
   async backspace(
     count = 1,
-    { delayBetween = 0, delayAfter = 100 }: MultipleDelayOptions = {},
+    { delayBetween = 50, delayAfter = 500 }: MultipleDelayOptions = {},
   ) {
     for (let i = 0; i < count; i++) {
       if (i > 0) {
@@ -76,12 +82,6 @@ export class Driver {
       await this.driver.pressKeyCode(AndroidKeys.KEYCODE_DEL)
     }
 
-    await this.pause(delayAfter)
-  }
-
-  async cycleLanguage({ delayAfter = 100 }: DelayOptions = {}) {
-    // On some devices, this may need to be KEYCODE_LANGUAGE_SWITCH instead
-    await driver.driver.pressKeyCode(AndroidKeys.KEYCODE_SPACE, 1)
     await this.pause(delayAfter)
   }
 
