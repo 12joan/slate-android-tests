@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "test": "yarn build && yarn test:appium",
+    "test:watch": "yarn build && yarn test:appium:watch",
     "build": "yarn build:vite && yarn build:android",
     "build:vite": "tsc -b && vite build",
     "build:android": "./gradlew build && ./gradlew installDebug",
     "test:appium": "vitest run",
+    "test:appium:watch": "vitest",
     "appium:install": "sh appium_install.sh",
     "vite:dev": "vite",
     "prepare": "yarn appium:install"

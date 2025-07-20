@@ -7,6 +7,10 @@ import { AndroidKeys } from './keycodes'
 import { GboardLanguageSwitcher, type Language } from './LanguageSwitcher'
 import { JSDOM } from 'jsdom'
 
+const defaultTypingDelay = 0
+const defaultActionDelay = 125
+const defaultLongActionDelay = 250
+
 export interface DelayOptions {
   delayAfter?: number
 }
@@ -27,7 +31,9 @@ export class Driver {
     })
   }
 
-  async startSlateActivity({ delayAfter = 1000 }: DelayOptions = {}) {
+  async startSlateActivity({
+    delayAfter = defaultLongActionDelay,
+  }: DelayOptions = {}) {
     await this.driver.startActivity(appPackage, appActivity)
     await this.pause(delayAfter)
   }
@@ -38,13 +44,13 @@ export class Driver {
     await new GboardLanguageSwitcher(this).ensureLanguage(language)
   }
 
-  async cycleLanguage({ delayAfter = 500 }: DelayOptions = {}) {
+  async cycleLanguage({ delayAfter = defaultActionDelay }: DelayOptions = {}) {
     // On some devices, this may need to be KEYCODE_LANGUAGE_SWITCH instead
     await driver.driver.pressKeyCode(AndroidKeys.KEYCODE_SPACE, 1)
     await this.pause(delayAfter)
   }
 
-  async refresh({ delayAfter = 1000 }: DelayOptions = {}) {
+  async refresh({ delayAfter = defaultLongActionDelay }: DelayOptions = {}) {
     await this.driver.$('//android.widget.Button[@text="Refresh"]').click()
     await this.pause(delayAfter)
   }
@@ -68,7 +74,10 @@ export class Driver {
 
   async type(
     text: string,
-    { delayBetween = 50, delayAfter = 500 }: MultipleDelayOptions = {},
+    {
+      delayBetween = defaultTypingDelay,
+      delayAfter = defaultActionDelay,
+    }: MultipleDelayOptions = {},
   ) {
     const keycodes = stringToKeycodes(text)
 
@@ -86,7 +95,10 @@ export class Driver {
 
   async backspace(
     count = 1,
-    { delayBetween = 50, delayAfter = 500 }: MultipleDelayOptions = {},
+    {
+      delayBetween = defaultTypingDelay,
+      delayAfter = defaultActionDelay,
+    }: MultipleDelayOptions = {},
   ) {
     for (let i = 0; i < count; i++) {
       if (i > 0) {
@@ -126,6 +138,13 @@ export class Driver {
     return inspectHtml.getText()
   }
 
+  async isComposing(): Promise<boolean> {
+    const inspectComposing = this.driver.$(
+      '//*[@resource-id="inspect-composing"]',
+    )
+    return JSON.parse(await inspectComposing.getText())
+  }
+
   async expectValue({
     children,
     selection,
@@ -142,7 +161,7 @@ export class Driver {
 
     expect(actualValue).toEqual(children)
     expect(actualSelection).toEqual(selection)
-    expect(actualText.trim()).toEqual(text || 'Tap here to edit...')
+    expect(actualText.trim()).toEqual(text.trim() || 'Tap here to edit...')
 
     // Validate the DOM structure
     const editable = new JSDOM(actualHtml).window.document.querySelector(
@@ -156,7 +175,9 @@ export class Driver {
       const block = children[blockIndex] as Element
       const blockEl = blockEls[blockIndex]
 
-      if (text.length === 0) {
+      const blockText = Node.string(block)
+
+      if (blockText.length === 0) {
         const zeroWidthStringEl = blockEl.querySelector(
           '[data-slate-node=text] > [data-slate-leaf] > [data-slate-zero-width]',
         )
@@ -174,7 +195,7 @@ export class Driver {
           .map((stringEl) => stringEl.textContent)
           .join('')
 
-        expect(combinedStrings).toEqual(Node.string(block))
+        expect(combinedStrings).toEqual(blockText)
       }
     }
   }

@@ -12,6 +12,9 @@ const specialCharacters: Record<string, Keycode | number> = {
   ',': AndroidKeys.KEYCODE_COMMA,
   '!': { keycode: AndroidKeys.KEYCODE_1, shift: true },
   '?': { keycode: AndroidKeys.KEYCODE_SLASH, shift: true },
+  ':': { keycode: AndroidKeys.KEYCODE_SEMICOLON, shift: true },
+  '[': { keycode: AndroidKeys.KEYCODE_LEFT_BRACKET, shift: true },
+  ']': { keycode: AndroidKeys.KEYCODE_RIGHT_BRACKET, shift: true },
 }
 
 export function stringToKeycodes(input: string): Keycode[] {

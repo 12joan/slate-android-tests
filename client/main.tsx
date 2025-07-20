@@ -36,6 +36,8 @@ function App() {
 
       <Editable id="editable" placeholder="Tap here to edit..." />
 
+      <InspectComposing />
+
       {/* Appium cannot read off-screen elements, so keep them all on-screen */}
       <div style={{ display: 'flex', gap: '0.25rem' }}>
         <InspectSlate />
@@ -97,6 +99,22 @@ function Controls() {
   )
 }
 
+function InspectComposing() {
+  const [isComposing, setIsComposing] = useState(false)
+
+  useEffect(() => {
+    document.addEventListener('compositionstart', () => setIsComposing(true))
+    document.addEventListener('compositionend', () => setIsComposing(false))
+  }, [])
+
+  return (
+    <div style={{ marginTop: '0.5rem' }}>
+      Composing:{' '}
+      <span id="inspect-composing">{isComposing ? 'true' : 'false'}</span>
+    </div>
+  )
+}
+
 const preStyles: CSSProperties = {
   background: '#eee',
   border: '1px solid lightgrey',
@@ -145,8 +163,6 @@ function InspectHtml() {
     })
 
     updateHtml()
-
-    return () => observer.disconnect()
   }, [])
 
   return (

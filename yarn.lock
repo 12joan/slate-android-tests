@@ -4638,7 +4638,7 @@ slate-hyperscript@^0.100.0:
 
 slate-react@^0.117.4:
   version "0.117.4"
-  resolved "https://registry.npmjs.org/slate-react/-/slate-react-0.117.4.tgz"
+  resolved "https://registry.yarnpkg.com/slate-react/-/slate-react-0.117.4.tgz#04c925b41e9cc507937819b4d7192e1fc2bb85a9"
   integrity sha512-9ckilyUzQS1VHJnstIpgInhcWnTDgv2Cd7m1HOQVl3zasChoapPSMftzT/wl/48grZaZYZIi4xVuzGTcFRUWFg==
   dependencies:
     "@juggle/resize-observer" "^3.4.0"
