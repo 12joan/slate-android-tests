@@ -46,4 +46,4 @@ App Automate currently costs 2,400 USD per year (when billed annually), which we
 - [ ] Tests for frequently occurring Android bugs
 - [ ] Integration with App Automate
 - [ ] Inclusion in Slate's CI tests
-- [ ] Support for iOS tests
+- [ ] Optional extra: Support for iOS tests (since fixing Android bugs might introduce iOS bugs)
