@@ -42,6 +42,7 @@ App Automate currently costs 2,400 USD per year (when billed annually), which we
 - [x] Proof of concept
 - [x] Test helpers (to populate the editor, select points, send keystrokes, validate the Slate value and DOM, etc.)
 - [x] Programatically changing keyboard input language
+  - [ ] Improve support for changing input language on a wider range of devices (https://github.com/12joan/slate-android-tests/issues/2, https://github.com/12joan/slate-android-tests/issues/3)
 - [ ] Tests for frequently occurring Android bugs
 - [ ] Integration with App Automate
 - [ ] Inclusion in Slate's CI tests
