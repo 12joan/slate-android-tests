@@ -12,31 +12,31 @@ export abstract class LangaugeSwitcher {
   async ensureLanguage(languageId: Language) {
     switch (languageId) {
       case 'english':
-        await this.ensureLanguageByInput('English (US)', 'a', 'a')
+        await this.ensureLanguageByInput('a', 'a', ['English (US)'])
         break
 
       case 'japanese':
-        await this.ensureLanguageByInput('Japanese', 'a', 'あ')
+        await this.ensureLanguageByInput('a', 'あ', ['Japanese', '日本語'])
         break
     }
   }
 
   private async ensureLanguageByInput(
-    language: string,
     input: string,
     output: string,
+    languageNames: string[],
   ) {
     if (await this.switchToLanguage(input, output, 2)) return
 
-    await this.ensureLanguageEnabled(language)
+    await this.ensureLanguageEnabled(languageNames)
     await this.driver.startSlateActivity()
 
     if (await this.switchToLanguage(input, output, 10)) return
 
-    throw new Error(`Failed to switch to ${language}`)
+    throw new Error(`Failed to switch to ${languageNames[0]}`)
   }
 
-  protected abstract ensureLanguageEnabled(language: string): Promise<void>
+  protected abstract ensureLanguageEnabled(languageNames: string[]): Promise<void>
 
   private async switchToLanguage(
     input: string,
@@ -60,7 +60,9 @@ export abstract class LangaugeSwitcher {
 }
 
 export class GboardLanguageSwitcher extends LangaugeSwitcher {
-  protected async ensureLanguageEnabled(language: string) {
+  protected async ensureLanguageEnabled(languageNames: string[]) {
+    const [language] = languageNames;
+
     // Open Gboard settings
     await this.driver.driver.startActivity(
       'com.google.android.inputmethod.latin',
@@ -74,16 +76,16 @@ export class GboardLanguageSwitcher extends LangaugeSwitcher {
       return
 
     // Enable the language
-    await this.driver.driver.$('//*[@text="ADD KEYBOARD"]').click()
+    await this.driver.driver.$('//*[@text="ADD KEYBOARD" or @text="Add keyboard"]').click()
     await this.driver.driver
-      .$('//*[@content-desc="Search for a language"]')
+      .$('//*[@text="Search language" or @content-desc="Search for a language"]')
       .click()
     await this.driver.driver
-      .$('//android.widget.AutoCompleteTextView')
+      .$('//android.widget.AutoCompleteTextView | //android.widget.EditText')
       .sendKeys([language])
     await this.driver.driver.pause(100)
     await this.driver.driver
-      .$(`//android.widget.TextView[@text="${language}"]`)
+      .$(`//android.widget.TextView[${languageNames.map(l => `@text="${l}"`).join(' or ')}]`)
       .click()
     await this.driver.driver.$('//*[@text="Done"]').click()
   }
